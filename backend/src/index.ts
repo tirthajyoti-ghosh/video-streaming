@@ -4,11 +4,8 @@ import fs from 'fs';
 import path from 'path';
 import ffmpeg from 'fluent-ffmpeg';
 import sharp from 'sharp';
-import { promisify } from 'util';
 import { tmpdir } from 'os';
 import { v4 as uuidv4 } from 'uuid';
-
-const rename = promisify(fs.rename);
 
 dotenv.config({ path: '.env' });
 
@@ -41,7 +38,7 @@ async function generateThumbnail(videoPath: string): Promise<string> {
           .resize(854, 480) // Resize to 854x480 for a 16:9 aspect ratio
           .jpeg({ quality: 75 }) // Reduce quality to 75%
           .toFile(tempThumbnailPath)
-          .then(() => rename(tempThumbnailPath, thumbnailPath))
+          .then(() => fs.promises.rename(tempThumbnailPath, thumbnailPath))
           .then(() => resolve(thumbnailPath))
           .catch(reject);
       })
